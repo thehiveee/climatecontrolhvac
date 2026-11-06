@@ -12,7 +12,11 @@ src/                     ← readable (un-minified) site.css and site.js
 brand/                   ← high-res transparent logo (1451 px PNG/WebP) + emblem
 ```
 
-## Launch in 5 steps
+## Deploying on Vercel
+`vercel.json` tells Vercel to serve the `site/` folder (no build step), and `api/lead.mjs` runs the quote form handler at `/api/lead`. HTTPS is automatic. Headers, CSP and 301 redirects mirror `netlify.toml`.
+In Vercel → Project → Settings, keep **Root Directory** empty and **Framework Preset** as "Other". Add the environment variables from `.env.example` under **Environment Variables**, then redeploy.
+
+## Launch in 5 steps (Netlify shown; Vercel works the same — see above)
 1. **Deploy**: push this folder to a Git repo → "Add new site" in Netlify → it reads `netlify.toml` automatically. Point `climatecontrolhvac.com` DNS at Netlify; HTTPS certificate is issued automatically.
 2. **Lead emails**: create a free [Resend](https://resend.com) account, verify the domain, then set `RESEND_API_KEY`, `LEAD_TO_EMAIL`, `LEAD_FROM_EMAIL` in Netlify → Site settings → Environment variables.
 3. **Analytics**: create a GA4 property and replace `G-XXXXXXXXXX` in every page's `<body data-ga="…">` (search & replace). It's a public ID, not a secret. GA loads **only after** the visitor clicks "Accept analytics". Events tracked: `call_click`, `offer_call_click`, `exit_offer_view`, `generate_lead`. Mark `call_click` and `generate_lead` as key events.
