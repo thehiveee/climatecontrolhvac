@@ -1,0 +1,41 @@
+# Apache / cPanel hosting (use instead of netlify.toml if the site is hosted on Apache).
+# Note: the quote form posts to /api/lead — on Apache, point it at your own server-side
+# handler (keep API keys in server environment variables, never in the HTML/JS).
+
+Options -Indexes
+RewriteEngine On
+
+# ---------- Force HTTPS + canonical host (no www) ----------
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://climatecontrolhvac.com%{REQUEST_URI} [L,R=301]
+
+# ---------- Old WordPress URLs → new pages ----------
+RewriteRule ^service/air-conditioning-service/?$ /air-conditioning/ [L,R=301]
+RewriteRule ^service/heating-services-ny/?$ /heating/ [L,R=301]
+RewriteRule ^service/hot-water-heater-ny/?$ /hot-water-heaters/ [L,R=301]
+RewriteRule ^service/nyc-cooling-tower-service/?$ /cooling-towers/ [L,R=301]
+RewriteRule ^services/?$ / [L,R=301]
+RewriteRule ^about/?$ / [L,R=301]
+RewriteRule ^contact/?$ /emergency-hvac/ [L,R=301]
+
+# ---------- Custom 404 ----------
+ErrorDocument 404 /404.html
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  <FilesMatch "\.(css|js|webp|jpg|png|ico|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml application/xml text/plain application/manifest+json
+</IfModule>

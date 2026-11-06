@@ -1,0 +1,58 @@
+# Netlify deploy config. Netlify serves every site over HTTPS automatically and redirects http → https.
+[build]
+  publish = "site"
+  functions = "netlify/functions"
+
+# ---------- Canonical host: www → apex ----------
+[[redirects]]
+  from = "https://www.climatecontrolhvac.com/*"
+  to = "https://climatecontrolhvac.com/:splat"
+  status = 301
+  force = true
+
+# ---------- Old WordPress URLs → new pages (keeps SEO, fixes broken inbound links) ----------
+[[redirects]]
+  from = "/service/air-conditioning-service/*"
+  to = "/air-conditioning/"
+  status = 301
+[[redirects]]
+  from = "/service/heating-services-ny/*"
+  to = "/heating/"
+  status = 301
+[[redirects]]
+  from = "/service/hot-water-heater-ny/*"
+  to = "/hot-water-heaters/"
+  status = 301
+[[redirects]]
+  from = "/service/nyc-cooling-tower-service/*"
+  to = "/cooling-towers/"
+  status = 301
+[[redirects]]
+  from = "/services/*"
+  to = "/#services-title"
+  status = 301
+[[redirects]]
+  from = "/about/*"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/contact/*"
+  to = "/emergency-hvac/"
+  status = 301
+
+# ---------- Security headers (all pages) ----------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-Du+OJKJSbdUgz5nrHeWWINvez6XKDDU/tyj/5c2uvwo=' https://www.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; frame-src https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+
+# ---------- Long-lived caching for versioned assets ----------
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
